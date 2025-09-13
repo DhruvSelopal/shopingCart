@@ -8,6 +8,8 @@ export class MockDataBase{
     private  users = new Map<string,User>()
     private  products = new Map<number,Product>()
     private productCount = new Map<number,number>()
+    private cartItems = new Map<string,Map<number,number>>()
+    
 
     private john_doe: User = 
         {
@@ -87,7 +89,7 @@ export class MockDataBase{
         //     }
         // }
 
-        if(!this.checkForUsername(userSignUp.username)) return of(false).pipe(delay(2000))
+        if(this.checkForUsername(userSignUp.username)) return of(false).pipe(delay(2000))
 
         let newUser:User = {
             email: userSignUp.email,
@@ -96,6 +98,8 @@ export class MockDataBase{
             fullName : userSignUp.fullName
         }
         this.users.set(userSignUp.username,newUser)
+        let pMap = new Map<number,number>() // product map for cart initialization
+        this.cartItems.set(userSignUp.username,pMap)
         return of(true).pipe(delay(3000))
     }
 
@@ -129,7 +133,7 @@ export class MockDataBase{
     changePassword(username:string,oldpas:string,newpas:string):Observable<boolean>{
         let user : User | undefined = this.users.get(username)
         if(user){
-            user.password = oldpas
+            user.password = newpas
             return of(true).pipe(delay(3000))
         }
         else return of(false).pipe(delay(1000))
@@ -137,7 +141,7 @@ export class MockDataBase{
     }
 
 
-// These are the products mod data apis...........
+// These are the products mock data apis...........
 // ###############################################
     getAllProducts(): Observable<Product[]>{
         const prod: Product[] = []
@@ -153,7 +157,9 @@ export class MockDataBase{
 
     filterProductByCategory(category:string) : Observable<Product[]>{
         const prod:Product[] = []
-        for(let  [key ,product] of this.products) prod.push(product);
+        for(let  [key ,product] of this.products){
+            if(product.category === category) prod.push(product)
+        }
         return of(prod).pipe(delay(3000))
     }
 
@@ -165,7 +171,7 @@ export class MockDataBase{
         return of(prod).pipe(delay(3000))
     }
 
-    addProduct(productdetails:productDetails):void{
+    addProduct(productdetails:productDetails,pcount:number):void{
         const product:Product = {
             id:this.setProductId,
             name: productdetails.name,
@@ -176,6 +182,7 @@ export class MockDataBase{
             inStock: productdetails.inStock
         }
         this.products.set(this.setProductId,product)
+        this.productCount.set(this.setProductId,pcount)
         this.setProductId++;
     }
 
@@ -186,4 +193,56 @@ export class MockDataBase{
     deleteProduct(id:number):void{
         this.products.delete(id);
     }
+
+// These are cart's mock data apis
+// ###############################
+
+    addToCart(username:string,pid:number):void{
+        let count = this.cartItems.get(username)?.get(pid);
+        let user = this.cartItems.get(username)
+        if(count){ 
+            this.cartItems.get(username)?.set(pid,count+1)
+        }
+        else if(user) this.cartItems.get(username)?.set(pid,1)
+    }
+
+    removeFromCart(username:string,pid:number):void{
+        let user  = this.cartItems.get(username)
+        if(user) this.cartItems.get(username)?.delete(pid)
+    }
+
+    getProductInCartCount(username:string):Observable<Map<number,number>>{
+        let cartItemsCount = new Map<number,number>() // product id and its count for cart items
+        let user = this.cartItems.get(username)
+        if(user){
+            for(let pid of user.keys()){
+            let pcount = this.productCount.get(pid)
+            if(pcount){
+                cartItemsCount.set(pid,pcount)
+            }
+            }
+        }
+        return of(cartItemsCount).pipe(delay(6000)) 
+    }
+
+    cartQuantities(username:string):Observable<Map<number,number>>{
+        const cartCount = new Map<number,number>();
+        const user = this.cartItems.get(username);
+        if(user){
+            for(let [pid,count] of user){
+                cartCount.set(pid,count)
+            }
+        }
+        return of(cartCount).pipe(delay(4000))
+    }
+
+    updateCartQuantity(username:string,pid:number,quantity:number):void{
+        let user = this.cartItems.get(username)
+        if(user){
+            user.set(pid,quantity)
+        }
+    }
+
+
+
 }

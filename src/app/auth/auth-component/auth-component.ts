@@ -11,5 +11,7 @@ export class AuthComponent {
 
   switchTab(tab: 'login' | 'signup') {
     this.activeTab = tab;
+    console.log(this.activeTab)
   }
+
 }

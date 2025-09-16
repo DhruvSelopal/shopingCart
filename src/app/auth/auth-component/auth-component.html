@@ -4,26 +4,34 @@
 
     <!-- Tabs -->
     <div class="flex justify-around border-b pb-2">
-      <button class="w-1/2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 pb-2">
+      <button class="w-1/2 text-center  pb-2 " (click)="switchTab('login')" 
+       [ngClass]="activeTab === 'login' ? 'font-semibold text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-blue-600 '  " 
+      >
         Login
       </button>
-      <button class="w-1/2 text-center text-gray-500 hover:text-blue-600 pb-2 ">
+      <button class="w-1/2 text-center  pb-2 " (click)="switchTab('signup')"
+      [ngClass]="activeTab === 'signup' ? 'font-semibold text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-blue-600 '  "
+      >       
         Signup
       </button>
     </div>
 
     <!-- login -->
-    <app-login></app-login>
-
+    @if (activeTab === 'login'){
+      <app-login></app-login>
+    }
     <!-- signup -->
-     <app-signup></app-signup>
+    @else {
+      <app-signup></app-signup>
+    }
+
 
     
 
     <!-- Divider -->
     <div class="flex items-center justify-center">
       <span class="text-sm text-gray-500">Don’t have an account? 
-        <a class="text-blue-600 font-semibold hover:underline" href="#">Sign up</a>
+        <button (click)="switchTab('signup')"><a class="text-blue-600 font-semibold hover:underline" >Sign up</a></button>
       </span>
     </div>
 

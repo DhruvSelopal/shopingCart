@@ -1,18 +1,21 @@
 import { delay, map, Observable,of } from "rxjs";
 import { User,Address,Product,SignUp,LoginCredentials, productDetails } from "./Types";
+import { Injectable } from "@angular/core";
 
-
+@Injectable({
+  providedIn: 'root'
+})
 export class MockDataBase{
 
     private setProductId:number = 104
-    private  users = new Map<string,User>()
-    private  products = new Map<number,Product>()
-    private productCount = new Map<number,number>()
-    private cartItems = new Map<string,Map<number,number>>()
+    private  users = new Map<string,User>()                  // all the users mapped to their username as its unique
+    private  products = new Map<number,Product>()            // Storing all the products on pid
+    private productCount = new Map<number,number>()          // total count of all the products
+    private cartItems = new Map<string,Map<number,number>>() // string is username and map of product id and count
     
 
     private john_doe: User = 
-        {
+    {
             username: "john_doe",
             email: "john@example.com",
             password: "hashed-password",
@@ -242,7 +245,5 @@ export class MockDataBase{
             user.set(pid,quantity)
         }
     }
-
-
 
 }

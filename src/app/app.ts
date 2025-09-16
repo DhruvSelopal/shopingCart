@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Navbar } from './shared/navbar/navbar';
+import { AppService } from './app-service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,9 @@ import { Component } from '@angular/core';
   styleUrl: './app.css'
 })
 export class App {
+  constructor(private appservice:AppService){}
   protected title = 'ShoppingCart';
+  isLoggedIn(){
+    return this.appservice.checkUserName()
+  }
 }

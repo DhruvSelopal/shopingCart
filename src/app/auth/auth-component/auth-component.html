@@ -1,0 +1,32 @@
+<!-- auth.component.html -->
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="w-full max-w-md bg-white shadow-md rounded-2xl p-6 space-y-6">
+
+    <!-- Tabs -->
+    <div class="flex justify-around border-b pb-2">
+      <button class="w-1/2 text-center font-semibold text-blue-600 border-b-2 border-blue-600 pb-2">
+        Login
+      </button>
+      <button class="w-1/2 text-center text-gray-500 hover:text-blue-600 pb-2 ">
+        Signup
+      </button>
+    </div>
+
+    <!-- login -->
+    <app-login></app-login>
+
+    <!-- signup -->
+     <app-signup></app-signup>
+
+    
+
+    <!-- Divider -->
+    <div class="flex items-center justify-center">
+      <span class="text-sm text-gray-500">Don’t have an account? 
+        <a class="text-blue-600 font-semibold hover:underline" href="#">Sign up</a>
+      </span>
+    </div>
+
+   
+  </div>
+</div>

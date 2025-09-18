@@ -1,25 +1,41 @@
 import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LoginService } from './login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: false,
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.css',
+  providers:[LoginService]
 })
 export class Login {
-  username:FormControl = new FormControl('',Validators.required)
-  password:FormControl = new FormControl('',[Validators.required])
+  
+  loginForm = new FormGroup({
+    user :  new FormControl('',Validators.required),
+    password : new FormControl('',[Validators.required])
+  })
 
+  constructor(private loginservice:LoginService,private router:Router){}
 
-  isEmail(value: string): boolean {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailPattern.test(value);
-  }
 
   formSubmit(){
-    if(this.username.valid && this.password.valid) console.log("logged in succssful")
-    else console.log("invalid form")
+    if(this.loginForm.valid){
+      let user:string | undefined | null = this.loginForm.get('user')?.value
+      let password:string | undefined | null = this.loginForm.get('password')?.value
+      if(user && password){
+        this.loginservice.checkCredentials(user,password).subscribe((data) =>{
+          if(data){
+            localStorage.setItem('username',data)
+            this.router.navigate(['/homepage'])
+          }
+          else alert("invalid credentials")
+        })
+      }
+      else alert("fail to fetch details from temaplate")
+    }
+    else alert("form is invalid")
   }
 
 }

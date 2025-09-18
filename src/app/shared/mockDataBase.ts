@@ -84,7 +84,14 @@ export class MockDataBase{
         return this.users.has(username)
     }
 
-    registerUser(userSignUp:SignUp):Observable<boolean>{
+    private checkForEmail(email:string): string | false{
+        for( let [username,user] of this.users){
+            if(user.email === email) return user.username;
+        }
+        return false;
+    }
+
+    registerUser(userSignUp:SignUp):Observable<boolean | string>{
 
         // for(let i =0; i < this.Users.length;i++){
         //     if(this.Users[i].username === userSignUp.username){
@@ -92,7 +99,8 @@ export class MockDataBase{
         //     }
         // }
 
-        if(this.checkForUsername(userSignUp.username)) return of(false).pipe(delay(2000))
+        if(this.checkForUsername(userSignUp.username)) return of(false).pipe(delay(2000));
+        if(!this.checkForEmail(userSignUp.email)) return of("email already in use").pipe(delay(2000))
 
         let newUser:User = {
             email: userSignUp.email,
@@ -106,15 +114,32 @@ export class MockDataBase{
         return of(true).pipe(delay(3000))
     }
 
-    login(loginDetails:LoginCredentials): Observable<(User | null)>{
+    login(loginDetails:LoginCredentials): Observable<(string | null)>{
         // for(let i = 0; i < this.Users.length;i++){
         //     if(this.Users[i].username === loginDetails.username && this.Users[i].password === loginDetails.password){
         //         return of(this.Users[i]).pipe(delay(3000))
                 
         //     }
         // }
-        if(this.users.has(loginDetails.username) && this.users.get(loginDetails.username)?.password === loginDetails.password){
-            return of(this.users.get(loginDetails.username) as User).pipe(delay(3000))
+        console.log(loginDetails.password)
+        if(loginDetails.username ){
+            console.log(loginDetails.username)
+            if(this.checkForUsername(loginDetails.username) && this.users.get(loginDetails.username)?.password === loginDetails.password){
+                return of(loginDetails.username).pipe(delay(3000))
+            }
+        } 
+        else if(loginDetails.email){
+            console.log(loginDetails.email)
+            let username = this.checkForEmail(loginDetails.email);
+            let user:User | undefined = undefined
+            if(username){
+                user = this.users.get(username)
+            }
+            if(user){
+                if(loginDetails.password === user.password){
+                    return of(loginDetails.username as string).pipe(delay(3000))
+                }
+            }
         }
         return of(null).pipe(delay(2000))
     }

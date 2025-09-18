@@ -8,7 +8,8 @@ export interface User extends SignUp{
   addresses?:Address[]
 }
 export interface LoginCredentials {
-  username: string;
+  email?:string,
+  username?: string;
   password: string;
 }
 export interface productDetails{
